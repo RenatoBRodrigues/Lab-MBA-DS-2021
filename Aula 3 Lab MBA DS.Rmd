@@ -1,0 +1,194 @@
+---
+title: "Aula 3 LAB MBA DS"
+Renato B Rodrigues
+11 99940 7179
+---
+
+```{r}
+library(stats4)
+library(tidyr)
+library(psych)
+library(ggplot2)
+library(base)
+library(utils)
+library(mosaic)
+library(psych)
+library(intervcomp)
+library(GAD)
+library(car)
+```
+
+```{r}
+vinhos <- read.csv2("~/Base_Vinhos_2018.csv")
+
+c <- describe(vinhos)
+c
+
+```
+
+```{r}
+# Gráfico sequencial + Box Plot
+SequencialBoxplot = function(a){
+tamanho <- length(a)
+x <- 1:tamanho
+boxplot(a)
+plot(a ~ x, type = "b")
+par(mfrow=c(1,2))
+boxplot(a)
+plot(a ~ x, type = "b")
+par(mfrow=c(1,1))
+}
+```
+
+```{r}
+SequencialBoxplot(vinhos$alcohol)
+```
+
+
+```{r}
+SequencialBoxplot(vinhos$quality)
+
+```
+```{r}
+Cor <- split(vinhos, vinhos$Vinho)
+
+```
+
+
+```{r}
+#Teste para igualdade de Variância
+
+Bonett.Seier.test(Cor$RED$alcohol, Cor$WHITE$alcohol)
+
+```
+
+```{r}
+leveneTest(vinhos$alcohol, vinhos$Vinho)
+```
+
+```{r}
+var.test(Cor$RED$alcohol, Cor$WHITE$alcohol)
+
+```
+```{r}
+t.test(vinhos$alcohol ~ vinhos$Vinho, conf.level = 0.95, var.equal = TRUE)
+
+```
+
+```{r}
+boxplot(vinhos$alcohol ~ vinhos$Vinho)
+```
+
+```{r}
+#Teste para igualdade de Variância
+
+Bonett.Seier.test(Cor$RED$quality, Cor$WHITE$quality)
+
+```
+
+```{r}
+leveneTest(vinhos$quality, vinhos$Vinho)
+```
+
+```{r}
+var.test(Cor$RED$quality, Cor$WHITE$quality)
+
+```
+```{r}
+t.test(vinhos$quality ~ vinhos$Vinho, conf.level = 0.95, var.equal = FALSE)
+
+```
+
+```{r}
+boxplot(vinhos$quality ~ vinhos$Vinho)
+```
+
+```{r}
+Ipem <- read.csv2("~/ipem.csv")
+#Habilidades <- read.csv2("~/habilidades.csv")
+#Hoteis <- read.csv2("~/Hoteis.csv")
+#Pneus <- read.csv2("~/pneus.csv")
+```
+
+```{r}
+#Teste para várias variancias e médias ANOVA
+FuncAnova = function(tot, y, x)
+{
+Anova <- lm(y ~ x)
+#print(C.test(Anova))
+print(anova(Anova))
+
+medias <- with(tot,tapply(y, x, mean)) 
+erro <- with(tot,tapply(y, x, function(x) sqrt(var(x)/length(x))))
+x <- barplot(medias,beside=T,ylim=c(10,20),ylab="Y",xlab="X")
+       arrows(x0=x,y0=medias-erro,
+       x1=x,y1=medias+erro,
+       angle=90,length=0.14,code=3)
+
+
+}
+```
+
+```{r}
+FuncAnova(Ipem, Ipem$Massa, Ipem$Marca)
+
+
+```
+
+```{r}
+FuncAnova(Habilidades, Habilidades$Tempo, Habilidades$Individuo)
+
+```
+```{r}
+FuncAnova(Pneus, Pneus$Durabilidade, Pneus$Marca)
+```
+```{r}
+FuncAnova(Hoteis, Hoteis$Nota, Hoteis$Hoteis)
+
+```
+
+```{r}
+Computador <- read.csv2("~/Computadores.csv")
+
+```
+
+```{r}
+plot (Computador$tempo ~ Computador$componentes)
+Regressao <- lm(Computador$tempo ~ Computador$componentes)
+
+summary(Regressao)
+plot(Regressao)
+
+```
+```{r}
+vinhos <- read.csv2("~/Base_Vinhos_2018.csv")
+
+```
+```{r}
+plot(vinhos$quality ~  vinhos$alcohol) 
+#Regressao <- lm(vinhos$quality ~ vinhos$alcohol)
+
+Regressao <- lm(vinhos$quality ~ vinhos$alcohol)
+
+summary(Regressao)
+plot(Regressao)
+
+```
+```{r}
+Cor <- split(vinhos, vinhos$Vinho)
+
+```
+```{r}
+plot(Cor$RED$quality ~ Cor$RED$alcohol) 
+Regressao <- lm(Cor$RED$quality ~ Cor$RED$alcohol)
+
+summary(Regressao)
+plot(Regressao)
+```
+```{r}
+plot(Cor$WHITE$quality ~ Cor$WHITE$alcohol) 
+Regressao <- lm(Cor$WHITE$quality ~ Cor$WHITE$alcohol)
+
+summary(Regressao)
+plot(Regressao)
+```
